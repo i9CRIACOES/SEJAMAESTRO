@@ -64,7 +64,7 @@ export function TrilhoPassos({ feitas, atual, aoIr, mostrar }: { feitas: boolean
       aria-label="Seus passos"
       inert={!mostrar}
       className={cn(
-        "hud fixed bottom-[calc(var(--esteira-h)+var(--nav-h)+env(safe-area-inset-bottom))] left-0 top-[var(--cabecalho-h)] z-30 hidden w-64 flex-col border-r border-ciano/25 bg-[oklch(0.12_0.04_265/0.9)] px-4 py-4 font-mono backdrop-blur-md transition-opacity duration-300 lg:flex",
+        "hud fixed bottom-[calc(var(--esteira-h)+env(safe-area-inset-bottom)+2px)] left-0 top-[var(--cabecalho-h)] z-30 hidden w-64 flex-col border-r border-ciano/25 bg-[oklch(0.12_0.04_265/0.9)] px-4 py-4 font-mono backdrop-blur-md transition-opacity duration-300 lg:flex",
         mostrar ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >
@@ -82,11 +82,11 @@ export function TrilhoPassos({ feitas, atual, aoIr, mostrar }: { feitas: boolean
         </svg>
         <div className="leading-none">
           <p className="text-4xl font-bold tabular-nums text-offwhite">{pct}<span className="text-lg text-ciano">%</span></p>
-          <p className="mt-1.5 text-xs uppercase tracking-widest text-muted-foreground">{ok}/{total} concluídas</p>
+          <p className="mt-1.5 text-xs uppercase tracking-widest text-muted-foreground">{String(ok).padStart(2, "0")}/{String(total).padStart(2, "0")} concluídas</p>
         </div>
       </div>
       <p className="mt-4 border-t border-white/10 pt-3 text-xs uppercase tracking-[0.2em] text-ciano/80">
-        Seção <span className="text-offwhite">{String(atual).padStart(2, "0")}</span>/{total}
+        Seção <span className="text-offwhite">{String(atual).padStart(2, "0")}</span>/{String(total).padStart(2, "0")}
       </p>
       <ol className="mt-2 flex min-h-0 flex-1 flex-col gap-1 overflow-x-hidden overflow-y-auto px-1">
         {feitas.map((feita, i) => {

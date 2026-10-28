@@ -169,6 +169,8 @@ body { overflow-x: clip; }
 ::selection { background: var(--ciano); color: var(--ink); }
 html, .hud ol { scrollbar-width: thin; scrollbar-color: var(--navy-light) var(--ink); }
 input, select, textarea { caret-color: var(--ciano); }
+button:enabled, a[href], [role="button"]:not([aria-disabled="true"]) { cursor: pointer; }
+button:disabled, [aria-disabled="true"] { cursor: not-allowed; }
 .assessment-range { appearance: none; height: 44px; cursor: pointer; background: transparent; accent-color: var(--ciano); }
 .assessment-range::-webkit-slider-runnable-track { height: 6px; border-radius: 10px; background: var(--navy-light); }
 .assessment-range::-webkit-slider-thumb { appearance: none; margin-top: -7px; width: 20px; height: 20px; border-radius: 50%; background: var(--ciano); border: 3px solid var(--ink); box-shadow: 0 2px 5px #0006; }
