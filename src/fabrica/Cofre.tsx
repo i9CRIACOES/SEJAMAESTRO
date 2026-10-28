@@ -15,7 +15,7 @@ const campo =
 
 function Campo({ id, nome, erro, ...p }: { id: keyof Contato; nome: string; erro: string | null } & InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <div className={cn("grid gap-1.5", id === "whatsapp" && "md:col-span-2")}>
+    <div className="row-span-3 grid min-w-0 grid-rows-subgrid gap-1.5">
       <label htmlFor={`c-${id}`} className={rotulo}>
         {nome}
         {String(p.value ?? "").trim() ? (
@@ -180,8 +180,8 @@ export function Cofre({ id, indice, desbloqueado, aberto, nome, aoEnviar, aoErro
                 {aberto ? <LockOpen className="size-7 md:size-8" strokeWidth={2.2} /> : <Lock className="size-7 md:size-8" strokeWidth={2.2} />}
               </motion.span>
             </div>
-            <form onSubmit={enviar} noValidate className="mt-4">
-              <fieldset disabled={enviando} className="grid gap-3.5 md:grid-cols-2">
+            <form onSubmit={enviar} noValidate className="@container mt-4">
+              <fieldset disabled={enviando} className="grid gap-x-3.5 gap-y-1.5 @min-[26rem]:grid-cols-2">
                 <Campo id="nome" nome="Nome" erro={erroDe("nome")} autoComplete="name" value={v.nome} onChange={muda("nome")} />
                 <Campo id="email" nome="E-mail corporativo" erro={erroDe("email")} type="email" inputMode="email" autoComplete="email" value={v.email} onChange={muda("email")} />
                 <Campo id="empresa" nome="Empresa (opcional)" erro={erroDe("empresa")} autoComplete="organization" value={v.empresa} onChange={muda("empresa")} />
