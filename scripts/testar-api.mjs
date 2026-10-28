@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { mkdirSync, writeFileSync, readFileSync, mkdtempSync, readdirSync, rmSync } from 'node:fs';
+import { writeFileSync, readFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -20,7 +20,10 @@ try {
   assert.equal(resultado.ok,true); assert.equal(resultado.notificado,false);
   const salvo = JSON.parse(readFileSync(path.join(privado,'respostas',resultado.id+'.json'),'utf8'));
   assert.equal(salvo.valorEmRiscoAno,437500000); assert.equal(salvo.maiorDor,'Flow');
-  assert.equal((await fetch('http://127.0.0.1:4182/.sejamaestro/respostas/'+resultado.id+'.json')).status,404);
+  const privadoHttp = await fetch('http://127.0.0.1:4182/.sejamaestro/respostas/'+resultado.id+'.json');
+  // O servidor PHP no Linux pode devolver index.html como fallback de uma rota ausente.
+  assert.notEqual(privadoHttp.headers.get('content-type')?.split(';')[0], 'application/json');
+  assert.equal((await privadoHttp.text()).includes('teste@example.invalid'), false);
   for(let i=0;i<5;i++) assert.equal((await enviar(dados)).status,201);
   assert.equal((await enviar(dados)).status,429);
   console.log('Integração HTTP passou: origem, validação, gravação privada, recálculo e limite. Nenhum e-mail enviado.');
