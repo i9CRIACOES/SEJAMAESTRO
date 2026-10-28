@@ -16,4 +16,6 @@ Ative habilitado após configurar armazenamento e HTTPS. Um remetente autorizado
 
 A API recalcula resultados e limita envios. Respostas privadas não entram no Git nem no deploy. Defina rotina de retenção e consulta operacional desses registros. Verifique armazenamento e notificação antes da divulgação pública.
 
+O webhook GitHub → Plesk acompanha a branch deploy. Cada push em main passa pelo CI e gera o build; version.json expõe somente o SHA de origem para verificar a publicação.
+
 Para reverter, reverta em main e publique o novo build após CI. Confira o commit no Plesk e na URL. Os registros privados permanecem fora do deploy.
