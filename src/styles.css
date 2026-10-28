@@ -165,6 +165,7 @@ body { overflow-x: clip; }
 @keyframes laser { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
 .laser { animation: laser 1.2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { .laser { animation: none; } }
+
 ::selection { background: var(--ciano); color: var(--ink); }
 input, select, textarea { caret-color: var(--ciano); }
 .assessment-range { appearance: none; height: 28px; cursor: pointer; background: transparent; accent-color: var(--ciano); }

@@ -2,6 +2,8 @@
 
 Assessment com a identidade visual Maestro e conteúdo do artefato autorizado. Cinco módulos, vinte notas de 0 a 10, radar, maior dor, valor em risco, rota e link original de agendamento.
 
+A interface reutiliza os componentes da Fábrica de soluções aprovada nas versões Acompanhado e Sozinho: portão com robô, estações, trilho lateral, mapa mobile, esteira, navegação e cofre. São seis estações: contexto e cinco módulos. Cada estação exige confirmação explícita; as notas iniciais podem ser mantidas. O painel usa os mesmos cartões industriais do resultado aprovado. As vinte perguntas e as fórmulas permanecem as do artefato. Após desbloquear, os dados da avaliação ficam bloqueados para manter o resultado igual ao registro enviado.
+
 As notas de cada módulo são médias simples e a maturidade geral é a média dos cinco módulos. Empates priorizam o primeiro módulo. Limiares: 3 e 7. Referências de receita: R$300 milhões, R$750 milhões e R$2,5 bilhões. Risco: receita × (5% + (10 − maturidade) / 10 × 25%). São estimativas do método do artefato.
 
 ## Verificar

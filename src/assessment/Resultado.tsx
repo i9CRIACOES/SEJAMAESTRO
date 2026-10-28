@@ -1,0 +1,19 @@
+import { useState } from 'react';
+import { calcularAssessment, moeda, status } from './calc';
+import { MODULOS } from './data';
+import { Radar } from './Radar';
+import { Cartao } from '../dashboard/Cartao';
+
+const COR = {ok:'text-ok',warn:'text-warn',err:'text-err'};
+export function ResultadoAssessment({r,registro}:{r:ReturnType<typeof calcularAssessment>;registro:string|null}) {
+  const [tabela,setTabela] = useState(false);
+  const st=status(r.geral);
+  return <div className="grid min-w-0 gap-4 md:gap-5 lg:grid-cols-12">
+    <header className="lg:col-span-12"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-ciano">Painel de controle · Maestro</p><h2 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">Onde está a sua maior dor</h2>{registro && <p role="status" className="mt-3 break-words text-xs text-muted-foreground">Diagnóstico gravado · código {registro}</p>}</header>
+    <Cartao codigo="O veredicto" className="lg:col-span-7"><p className={`inline-flex rounded-lg border border-current px-3 py-2 text-sm font-extrabold ${COR[st.nivel]}`}>{st.banda} · {r.geral.toFixed(1)}/10</p><h3 className="mt-5 text-2xl font-extrabold">Sua maior dor está em <span className="text-ciano">Maestro {r.modulo.nome}</span></h3><p className="mt-4 max-w-[62ch] leading-relaxed text-muted-foreground">{r.modulo.subtitulo}: é aqui que a decisão trava e o valor escapa primeiro (nota {r.notas[r.pior].toFixed(1)}). Resolve desafios de {r.modulo.areas.join(', ')}.</p>{r.gargalo&&<p className="mt-4 text-sm leading-relaxed text-warn">A média geral ({r.geral.toFixed(1)}) mascara este gargalo — e é exatamente por aqui que o Maestro entra primeiro.</p>}</Cartao>
+    <Cartao codigo="Valor estimado em risco" className="lg:col-span-5"><p className="mt-4 break-words text-4xl font-extrabold tabular-nums md:text-5xl">{moeda(r.riscoAno)}</p><p className="mt-2 font-bold text-ciano">por ano</p><p className="mt-6 text-sm leading-relaxed text-muted-foreground">Aproximadamente {(r.pct*100).toFixed(0)}% da receita de referência.*</p></Cartao>
+    <Cartao codigo="Maturidade" titulo="Radar dos cinco módulos" className="lg:col-span-5"><Radar notas={r.notas}/></Cartao>
+    <Cartao codigo="Rota recomendada" titulo={`Prioridade #1 — Maestro ${r.modulo.nome}`} className="lg:col-span-7"><p className="text-lg leading-relaxed">{r.modulo.rota}</p><p className="mt-5 leading-relaxed text-muted-foreground">Depois, expanda como sistema: os 5 módulos operam como uma inteligência contínua, sobre o stack que você já tem.</p><dl className="mt-6 grid gap-3">{MODULOS.map((m,i)=><div key={m.nome} className="flex justify-between gap-4 border-t border-white/10 pt-3"><dt>{m.nome}</dt><dd className={`font-bold tabular-nums ${COR[status(r.notas[i]).nivel]}`}>{r.notas[i].toFixed(1)}/10</dd></div>)}</dl></Cartao>
+    <div className="lg:col-span-12"><button type="button" onClick={()=>setTabela(v=>!v)} aria-expanded={tabela} aria-controls="tabela-modulos" className="min-h-12 rounded-xl border border-white/20 px-5 font-bold hover:border-ciano">{tabela?'Ocultar tabela':'Ver como tabela'}</button>{tabela&&<div id="tabela-modulos" className="mt-4 overflow-x-auto rounded-2xl border border-white/10 bg-navy p-5"><table className="w-full min-w-[540px] text-left text-sm"><caption className="sr-only">Maturidade por módulo</caption><thead><tr><th scope="col" className="py-3">Módulo</th><th scope="col">Nota</th><th scope="col">Situação</th><th scope="col">Áreas</th></tr></thead><tbody>{MODULOS.map((m,i)=><tr key={m.nome} className="border-t border-white/10"><th scope="row" className="py-4 pr-4">{m.nome}</th><td className="pr-4">{r.notas[i].toFixed(1)}</td><td className={COR[status(r.notas[i]).nivel]}>{status(r.notas[i]).texto}</td><td className="pl-4 text-muted-foreground">{m.areas.join(' · ')}</td></tr>)}</tbody></table></div>}</div>
+  </div>;
+}

@@ -16,3 +16,6 @@ Reutilizar a identidade do questionário Fábrica de soluções: logo, robô, Pl
 
 ## Evidence on Hand
 Artefato “Maestro Assessment — onde está a sua maior dor (Copy)”, consultado em 28/10/2026, e código de midiai9/questionario-maestro no commit a61aa1b. Estatísticas e cases são transcritos do artefato; não foram auditados externamente.
+
+## Interface aprovada (correção de 28/10/2026)
+As três versões devem compartilhar a UI aprovada: reutilizar componentes reais da fábrica, entrada, estações, mapa de progresso, esteira, navegação e cofre. A terceira muda o conteúdo do assessment, sem criar outra estrutura visual.
