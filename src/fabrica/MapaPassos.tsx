@@ -19,13 +19,13 @@ export function MapaPassos({ feitas, atual, aoIr }: { feitas: boolean[]; atual: 
       <ol className="flex flex-1 items-center gap-1 md:gap-1.5">
         {feitas.map((feita, i) => {
           const n = i + 1;
-          const eAtual = n === atual && !todos;
+          const eAtual = n === atual;
           return (
             <li key={n} className="min-w-0 flex-1">
               <button
                 type="button"
                 onClick={() => aoIr(i)}
-                disabled={!feita && !eAtual}
+                disabled={!feita && !eAtual && !(i === 0 || feitas.slice(0, i).every(Boolean))}
                 aria-current={eAtual ? "step" : undefined}
                 aria-label={`Passo ${n}: ${NOMES_PASSOS[i]}${feita ? " (feito)" : eAtual ? " (você está aqui)" : " (falta)"}`}
                 title={NOMES_PASSOS[i]}
@@ -88,7 +88,7 @@ export function TrilhoPassos({ feitas, atual, aoIr, mostrar }: { feitas: boolean
       <p className="mt-4 border-t border-white/10 pt-3 text-xs uppercase tracking-[0.2em] text-ciano/80">
         Seção <span className="text-offwhite">{String(atual).padStart(2, "0")}</span>/{total}
       </p>
-      <ol className="mt-2 flex min-h-0 flex-1 flex-col justify-between">
+      <ol className="mt-2 flex min-h-0 flex-1 flex-col gap-1 overflow-x-hidden overflow-y-auto px-1">
         {feitas.map((feita, i) => {
           const n = i + 1;
           const eAtual = n === atual;

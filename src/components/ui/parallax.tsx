@@ -26,6 +26,7 @@ export function TextoGigante({ texto, className, distancia = -140 }: { texto: st
     <Parallax distancia={distancia} className={className}>
       <span
         aria-hidden
+        style={{ backgroundClip: 'text', WebkitBackgroundClip: 'text' }}
         className="block select-none font-black leading-[0.8] tracking-tighter text-transparent [background:linear-gradient(180deg,oklch(0.82_0.15_210/0.16)_0%,oklch(0.62_0.2_300/0.08)_55%,transparent_90%)] [-webkit-background-clip:text] [background-clip:text]"
       >
         {texto}

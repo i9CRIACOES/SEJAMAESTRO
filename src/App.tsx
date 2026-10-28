@@ -18,6 +18,7 @@ import { FluxoConvergente } from './components/ui/fluxo-convergente';
 import { useEhDesktop } from './lib/useEhDesktop';
 import { som } from './audio/som';
 import { ResultadoAssessment } from './assessment/Resultado';
+import { registrarAssessment } from './assessment/envio';
 
 const IDS = ['estacao-perfil', ...MODULOS.map(m => `modulo-${m.nome}`)];
 const botao = 'mt-8 inline-flex min-h-14 items-center gap-3 rounded-2xl bg-ciano px-6 font-extrabold text-ink';
@@ -49,22 +50,18 @@ export default function App() {
     if (enviando) return;
     setEnviando(true);
     setFalha(null);
+    setContato(c);
     const p = payloadDiagnostico({nome:c.nome,email:c.email,empresa:c.empresa,cel:c.whatsapp,setor},scores,receita);
     try {
-      const resp = await fetch('/api/assessment.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...p,isca:isca?'preenchido':''}),signal:AbortSignal.timeout(20000)});
-      const dados = await resp.json();
-      if (!resp.ok || !dados.ok) throw new Error();
-      setRegistro(dados.id || 'recebido');
+      const dados = await registrarAssessment(p, isca);
+      setRegistro(dados.id);
       if (!dados.notificado) setFalha('Diagnóstico gravado. A notificação à equipe não foi confirmada; você pode encaminhar o resumo pelo seu e-mail.');
-    } catch {
-      // Keep the artifact's mail fallback available if automatic registration fails.
-      setFalha('Não foi possível gravar automaticamente. Encaminhe o resumo pelo seu e-mail no painel abaixo.');
-    }
-    setContato(c); setAberto(true); setEnviando(false); som.tocar('revelar');
+      setAberto(true); som.tocar('revelar');
+    } finally { setEnviando(false); }
   };
   const abrirPainel = () => { setPainel(true); rolarPara('resultado',100); };
   return <MotionConfig reducedMotion="user">
-    <a href="#estacao-perfil" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:z-50 focus:bg-ink focus:p-4">Ir para o questionário</a>
+    <a href="#estacao-perfil" onClick={() => setLigada(true)} className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:z-50 focus:bg-ink focus:p-4">Ir para o questionário</a>
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-20 bg-[radial-gradient(60%_50%_at_85%_0%,oklch(0.55_0.25_295/0.16),transparent),radial-gradient(50%_45%_at_0%_100%,oklch(0.82_0.15_210/0.1),transparent)]" />
     <FluxoConvergente className="fixed inset-0 -z-10 opacity-45" />
     <Cabecalho noPortao={visivel===0} estacao={Math.min(Math.max(visivel,1),6)} feitas={feitas} aoIr={irEstacao} />
@@ -79,11 +76,12 @@ export default function App() {
         <button type="button" className={botao} onClick={()=>confirmar(0)}>Confirmar contexto <ArrowRight className="size-5" /></button>
       </Estacao>
       {MODULOS.map((m,i)=><Estacao key={m.nome} id={IDS[i+1]} indice={i+2} numero={i+2} total={6} setor={`Maestro ${m.nome}`} titulo={m.subtitulo} ajuda="4 perguntas por módulo. Dê uma nota de 0 a 10: quanto maior, menos valor vaza." desbloqueada={podeEntrar(ligada,feitas,i+1)} anterior={`a estação ${i+1}`} lado={i%2?'esq':'dir'} alegoria={<div className="overflow-hidden rounded-2xl border border-ciano/25 bg-navy/80"><div className="fita-zebrada h-2"/><div className="p-6"><h3 className="text-xl font-extrabold text-ciano">Maestro {m.nome}</h3><Radar notas={r.notas}/><p className="text-sm font-bold text-ciano">{m.areas.join(' · ')}</p><p className="mt-4 text-sm leading-relaxed text-muted-foreground">{m.prova}</p><p className="mt-3 text-xs leading-relaxed text-muted-foreground">{m.fonte}</p></div></div>}>
-        <fieldset disabled={aberto || enviando} className="grid gap-8">{m.perguntas.map((q,j)=><div key={q}><label htmlFor={`nota-${i}-${j}`}><RotuloPergunta n={j+1} total={4} texto={q} respondida={feitas[i+1]}/></label><div className="mt-3 flex items-center gap-4"><input id={`nota-${i}-${j}`} aria-label={`${m.nome} pergunta ${j+1}`} type="range" min="0" max="10" step="1" value={scores[i][j]} onChange={e=>{const v=+e.target.value;setScores(s=>s.map((a,k)=>k===i?a.map((n,p)=>p===j?v:n):a));}} className="assessment-range w-full"/><output htmlFor={`nota-${i}-${j}`} className="min-w-10 text-right text-3xl font-extrabold tabular-nums text-ciano">{scores[i][j]}</output></div><div aria-hidden className="mt-1 flex justify-between text-xs text-muted-foreground"><span>0 · Ainda não acontece</span><span>10 · Sob controle</span></div></div>)}</fieldset>
+        <fieldset disabled={aberto || enviando} className="grid gap-8">{m.perguntas.map((q,j)=><div key={q}><label htmlFor={`nota-${i}-${j}`}><RotuloPergunta n={j+1} total={4} texto={q} respondida={feitas[i+1]}/></label><div className="mt-3 flex items-center gap-4"><input id={`nota-${i}-${j}`} aria-label={`${m.nome}, pergunta ${j+1}: ${q}`} type="range" min="0" max="10" step="1" value={scores[i][j]} onChange={e=>{const v=+e.target.value;setScores(s=>s.map((a,k)=>k===i?a.map((n,p)=>p===j?v:n):a));}} className="assessment-range w-full"/><output htmlFor={`nota-${i}-${j}`} className="min-w-10 text-right text-3xl font-extrabold tabular-nums text-ciano">{scores[i][j]}</output></div><div aria-hidden className="mt-1 flex justify-between text-xs text-muted-foreground"><span>0 · Ainda não acontece</span><span>10 · Sob controle</span></div></div>)}</fieldset>
         <button type="button" onClick={()=>confirmar(i+1)} className={botao}>Confirmar {m.nome} <ArrowRight className="size-5"/></button>
       </Estacao>)}
-      <Cofre id="cofre" indice={7} desbloqueado={feitas.every(Boolean)} aberto={aberto} nome={contato?.nome} aoEnviar={enviar} aoErro={()=>som.tocar('erro')} aoAbrir={abrirPainel}/>
-      {painel && <section id="resultado" data-indice={8} aria-label="Painel de controle" className="px-5 py-20 md:px-8 md:py-24"><div className="mx-auto max-w-6xl"><ResultadoAssessment r={r} registro={registro}/>
+      <Cofre id="cofre" indice={7} desbloqueado={feitas.every(Boolean)} aberto={aberto} nome={contato?.nome} aoEnviar={enviar} aoErro={()=>som.tocar('erro')} aoAbrir={abrirPainel}
+        alternativa={<div className="mt-4 grid gap-4 text-sm"><p className="text-muted-foreground">Corrija os dados ou tente novamente. Você também pode consultar o resultado e encaminhar o resumo pelo seu e-mail.</p><button type="button" onClick={abrirPainel} className="min-h-12 rounded-xl border border-ciano px-4 font-bold text-ciano">Ver diagnóstico sem gravar</button><a href={linkEmail(payload)} className="font-bold text-ciano underline underline-offset-4">Enviar pelo meu e-mail</a><label>Resumo para copiar<textarea readOnly value={resumoTexto(payload)} rows={5} className="mt-2 w-full rounded-xl border border-white/15 bg-ink p-3" onFocus={e=>e.target.select()}/></label></div>}/>
+      {painel && <section id="resultado" data-indice={8} aria-label="Painel de controle" className="px-5 py-20 md:px-8 md:py-24"><div className="mx-auto max-w-6xl">{!registro && <p role="status" className="mb-5 rounded-xl border border-warn/30 bg-navy p-4 text-sm text-warn">Este diagnóstico ainda não foi gravado. <button type="button" onClick={()=>rolarPara("cofre")} className="font-bold underline underline-offset-4">Voltar ao formulário para tentar novamente</button></p>}<ResultadoAssessment r={r} registro={registro}/>
         {falha && <div role="alert" className="mt-8 rounded-2xl border border-warn/30 bg-navy p-6"><p className="text-warn">{falha}</p><a href={linkEmail(payload)} className="mt-4 inline-block font-bold text-ciano underline underline-offset-4">Enviar pelo meu e-mail</a><label className="mt-4 block text-sm font-bold">Ou copie o resumo<textarea readOnly value={resumoTexto(payload)} rows={8} className="mt-2 w-full rounded-xl border border-white/15 bg-ink p-4 text-sm font-normal" onFocus={e=>e.target.select()}/></label></div>}
         <section className="mt-12 border-t border-white/12 py-10"><h2 className="text-3xl font-extrabold">Da leitura à próxima decisão.</h2><p className="mt-4 max-w-2xl leading-relaxed text-muted-foreground">Este assessment mostrou onde o valor escapa. A Sessão Executiva mostra quanto dá para recuperar — e por onde começar, com governança e sem trocar o seu stack.</p><a href="https://calendly.com/elcio-santos/30min" target="_blank" rel="noopener noreferrer" className={botao}><CalendarCheck className="size-5"/>Agendar Sessão Executiva</a></section><footer className="border-t border-white/12 pt-6"><p className="text-xs leading-relaxed text-muted-foreground">* {NOTA_METODO}</p><img src="/maestro-wordmark.svg" alt="Maestro" className="mt-8 h-8 w-36"/></footer>
       </div></section>}

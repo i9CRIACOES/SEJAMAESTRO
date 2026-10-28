@@ -21,3 +21,5 @@ A API recalcula resultados e limita envios. Respostas privadas não entram no Gi
 O webhook GitHub → Plesk acompanha a branch deploy. Cada push em main passa pelo CI e gera o build; version.json expõe somente o SHA de origem para verificar a publicação.
 
 Para reverter, reverta em main e publique o novo build após CI. Confira o commit no Plesk e na URL. Os registros privados permanecem fora do deploy.
+
+Na revisão final, falhas de rede ou validação mantêm o formulário editável e permitem repetir o envio. O diagnóstico pode ser consultado sem gravação, com aviso explícito e retorno ao formulário. Opções suportam setas/Home/End, os controles anunciam o enunciado completo e têm área de toque de 44px.

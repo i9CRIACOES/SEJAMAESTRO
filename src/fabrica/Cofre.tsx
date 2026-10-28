@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type InputHTMLAttributes } from "react";
+import { useEffect, useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, KeyRound, Lock, LockOpen } from "lucide-react";
 import { validarContato, type Contato } from "@/assessment/contato";
@@ -34,9 +34,10 @@ function Campo({ id, nome, erro, ...p }: { id: keyof Contato; nome: string; erro
  * O cofre: o formulário é a porta. Ao desbloquear, a porta gira nas dobradiças e mostra
  * a conta sendo fechada lá dentro (substitui a tela "calculando" da v1).
  */
-export function Cofre({ id, indice, desbloqueado, aberto, nome, aoEnviar, aoErro, aoAbrir }: {
+export function Cofre({ id, indice, desbloqueado, aberto, nome, aoEnviar, aoErro, aoAbrir, alternativa }: {
   id: string; indice: number; desbloqueado: boolean; aberto: boolean; nome?: string;
   aoEnviar: (c: Contato, isca: boolean) => void | Promise<void>; aoErro: () => void; aoAbrir: () => void;
+  alternativa?: ReactNode;
 }) {
   const [v, setV] = useState<Contato>({ nome: "", email: "", empresa: "", whatsapp: "" });
   const [isca, setIsca] = useState("");
@@ -45,7 +46,7 @@ export function Cofre({ id, indice, desbloqueado, aberto, nome, aoEnviar, aoErro
   const [pronto, setPronto] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [falhaEnvio, setFalhaEnvio] = useState<string | null>(null);
-  const muda = (k: keyof Contato) => (e: { target: { value: string } }) => setV({ ...v, [k]: e.target.value });
+  const muda = (k: keyof Contato) => (e: { target: { value: string } }) => { setV({ ...v, [k]: e.target.value }); setFalhaEnvio(null); setErro(null); };
   const erroDe = (k: keyof Contato) => (erro?.campo === k ? erro.mensagem : null);
 
   useEffect(() => {
@@ -187,7 +188,7 @@ export function Cofre({ id, indice, desbloqueado, aberto, nome, aoEnviar, aoErro
                 <Campo id="whatsapp" nome="WhatsApp (opcional)" erro={erroDe("whatsapp")} type="tel" inputMode="tel" autoComplete="tel" value={v.whatsapp} onChange={muda("whatsapp")} />
                 <input type="text" name="ref_url_x" tabIndex={-1} autoComplete="off" aria-hidden value={isca} onChange={(e) => setIsca(e.target.value)} className="absolute -left-[9999px] h-0 w-0 opacity-0" />
               </fieldset>
-              {falhaEnvio && <p role="alert" className="mt-4 text-sm text-err">{falhaEnvio}</p>}
+              {falhaEnvio && <div className="mt-4"><p role="alert" className="text-sm text-err">{falhaEnvio}</p>{alternativa}</div>}
               <button
                 type="submit"
                 disabled={enviando}

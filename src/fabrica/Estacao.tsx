@@ -98,7 +98,16 @@ export function Opcoes({ rotulo, opcoes, escolhida, aoEscolher, travado, aoPreve
             type="button"
             role="radio"
             aria-checked={sel}
+            tabIndex={sel || (escolhida === undefined && i === 0) ? 0 : -1}
             disabled={travado && !sel}
+            onKeyDown={(ev) => {
+              if (travado || !['ArrowDown', 'ArrowUp', 'ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(ev.key)) return;
+              ev.preventDefault();
+              const proxima = ev.key === 'Home' ? 0 : ev.key === 'End' ? opcoes.length - 1
+                : (i + (ev.key === 'ArrowRight' || ev.key === 'ArrowDown' ? 1 : -1) + opcoes.length) % opcoes.length;
+              const botoes = ev.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+              if (botoes?.[proxima] && !botoes[proxima].disabled) { aoEscolher(proxima); botoes[proxima].focus(); }
+            }}
             onClick={() => { aoPrever?.(null); aoEscolher(i); }}
             onPointerEnter={(ev) => { if (ev.pointerType === "mouse" && !travado) aoPrever?.(i); }}
             className={cn(
