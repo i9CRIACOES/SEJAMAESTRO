@@ -4,7 +4,7 @@ Assessment com a identidade visual Maestro e conteúdo do artefato autorizado. C
 
 A interface reutiliza os componentes da Fábrica de soluções aprovada nas versões Acompanhado e Sozinho: portão com robô, estações, trilho lateral, mapa mobile, esteira, navegação e cofre. São seis estações: contexto e cinco módulos. Cada estação exige confirmação explícita; as notas iniciais podem ser mantidas. O painel usa os mesmos cartões industriais do resultado aprovado. As vinte perguntas e as fórmulas permanecem as do artefato. Após desbloquear, os dados da avaliação ficam bloqueados para manter o resultado igual ao registro enviado.
 
-As notas de cada módulo são médias simples e a maturidade geral é a média dos cinco módulos. Empates priorizam o primeiro módulo. Limiares: 3 e 7. Referências de receita: R$300 milhões, R$750 milhões e R$2,5 bilhões. Risco: receita × (5% + (10 − maturidade) / 10 × 25%). São estimativas do método do artefato.
+As notas de cada módulo são médias simples e a maturidade geral é a média dos cinco módulos. Empates priorizam o primeiro módulo. Limiares: 3 e 7. Referências de receita: R$300 milhões, R$750 milhões, R$2,5 bilhões e R$5 bilhões. Risco: receita × (5% + (10 − maturidade) / 10 × 25%). São estimativas do método do artefato.
 
 ## Verificar
 
@@ -23,3 +23,9 @@ O webhook GitHub → Plesk acompanha a branch deploy. Cada push em main passa pe
 Para reverter, reverta em main e publique o novo build após CI. Confira o commit no Plesk e na URL. Os registros privados permanecem fora do deploy.
 
 Na revisão final, falhas de rede ou validação mantêm o formulário editável e permitem repetir o envio. O diagnóstico pode ser consultado sem gravação, com aviso explícito e retorno ao formulário. Opções suportam setas/Home/End, os controles anunciam o enunciado completo e têm área de toque de 44px.
+
+## Planilha compartilhada
+
+A API envia as respostas validadas ao fluxo Maestro, com QUESTIONARIO `sejamaestro`. As colunas próprias do assessment incluem as cinco médias, maturidade, maior dor, risco e Respostas Maestro (JSON com as vinte notas). As colunas Composer existentes são preservadas. Falhas na entrega à planilha retornam erro.
+
+A integração HTTP usa uma planilha simulada local e não grava dados de teste em produção. `MAESTRO_SHEET_WEBHOOK` permite substituir o destino apenas por configuração do servidor nos testes.
