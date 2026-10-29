@@ -8,7 +8,7 @@ function validarAssessment(array $v): array {
     }
     if ($campos['nome'] === '' || !filter_var($campos['email'], FILTER_VALIDATE_EMAIL) || preg_match('/[\r\n]/', $campos['email'])) throw new InvalidArgumentException('Preencha nome e e-mail válidos.');
     $setores = ['Varejo', 'E-commerce / DTC', 'Financeiro', 'Educação', 'Viagens / Aéreas', 'Mobilidade / Auto', 'Telecom', 'Franquias'];
-    $receitas = [300 => 'R$ 200M – 500M', 750 => 'R$ 500M – 1 BI', 2500 => 'R$ 1 BI – 4 BI'];
+    $receitas = [300 => 'R$ 200M – 500M', 750 => 'R$ 500M – 1 BI', 2500 => 'R$ 1 BI – 4 BI', 5000 => 'Acima de R$ 4 BI'];
     if (!in_array($campos['setor'], $setores, true) || !is_int($v['receita'] ?? null) || !isset($receitas[$v['receita']])) throw new InvalidArgumentException('Selecione setor e receita válidos.');
     $nomes = ['Flow', 'Insights', 'Teams', 'Composer', 'CX'];
     if (!is_array($v['modulos'] ?? null) || array_keys($v['modulos']) !== [0, 1, 2, 3, 4]) throw new InvalidArgumentException('Confira as notas dos cinco módulos.');
