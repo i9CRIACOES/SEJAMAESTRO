@@ -1,11 +1,15 @@
+import { createServer } from 'node:http';
 import { spawn } from 'node:child_process';
 import { writeFileSync, readFileSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+const linhas = [];
+const planilha = createServer(async (req,res) => { let body=''; for await (const chunk of req) body+=chunk; linhas.push(JSON.parse(body)); res.writeHead(200,{'Content-Type':'application/json'}); res.end(JSON.stringify({ok:true})); });
+await new Promise(resolve=>planilha.listen(4186,'127.0.0.1',resolve));
 const privado = mkdtempSync(path.join(tmpdir(), 'sejamaestro-test-'));
 writeFileSync(path.join(privado, 'config.php'), "<?php return ['habilitado'=>true,'url'=>'http://127.0.0.1:4182','remetente'=>''];");
-const servidor = spawn(process.env.PHP_BINARY || 'php', ['-S','127.0.0.1:4182','-t','dist'], { env:{...process.env,SEJAMAESTRO_PRIVATE_DIR:privado}, stdio:'ignore' });
+const servidor = spawn(process.env.PHP_BINARY || 'php', ['-S','127.0.0.1:4182','-t','dist'], { env:{...process.env,MAESTRO_SHEET_WEBHOOK:'http://127.0.0.1:4186',SEJAMAESTRO_PRIVATE_DIR:privado}, stdio:'ignore' });
 try {
   const base = 'http://127.0.0.1:4182/api/assessment.php';
   for (let i=0;i<30;i++) { try { await fetch(base); break; } catch { await new Promise(r=>setTimeout(r,100)); } }
@@ -26,5 +30,7 @@ try {
   assert.equal((await privadoHttp.text()).includes('teste@example.invalid'), false);
   for(let i=0;i<5;i++) assert.equal((await enviar(dados)).status,201);
   assert.equal((await enviar(dados)).status,429);
+  assert.equal(linhas[0].linha.QUESTIONARIO,'sejamaestro');
+  assert.deepEqual(JSON.parse(linhas[0].linha['Respostas Maestro']).Flow,[5,5,5,5]);
   console.log('Integração HTTP passou: origem, validação, gravação privada, recálculo e limite. Nenhum e-mail enviado.');
-} finally { servidor.kill(); rmSync(privado,{recursive:true,force:true}); }
+} finally { servidor.kill(); planilha.close(); rmSync(privado,{recursive:true,force:true}); }
