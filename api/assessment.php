@@ -22,8 +22,9 @@ try {
     $destino = $dir . '/respostas';
     if (!is_dir($destino) && !mkdir($destino, 0700, true) && !is_dir($destino)) throw new RuntimeException('storage');
     if (!limitarAssessment($destino, $_SERVER['REMOTE_ADDR'] ?? '', time())) responderAssessment(429, ['erro' => 'Aguarde alguns minutos antes de enviar novamente.']);
-    $id = bin2hex(random_bytes(16));
+    $id = uuidAssessment();
     if (file_put_contents($destino . '/' . $id . '.json', json_encode($dados, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE), LOCK_EX) === false) throw new RuntimeException('storage');
+    gravarPlanilhaAssessment($dados, $id, 'sejamaestro');
     $from = $config['remetente'] ?? '';
     $notificado = false;
     if (filter_var($from, FILTER_VALIDATE_EMAIL) && !preg_match('/[\r\n]/', $from)) {
