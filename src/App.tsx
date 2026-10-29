@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { MotionConfig } from 'framer-motion';
-import { ArrowRight, CalendarCheck } from 'lucide-react';
+import { ArrowRight, Building2, CalendarCheck, Car, GraduationCap, Landmark, Plane, RadioTower, ShoppingCart, Store, Warehouse } from 'lucide-react';
 import { calcularAssessment, linkEmail, payloadDiagnostico, resumoTexto } from './assessment/calc';
 import { MODULOS, NOTA_METODO, RECEITAS, SETORES } from './assessment/data';
 import { type Contato } from './assessment/contato';
@@ -21,6 +21,8 @@ import { ResultadoAssessment } from './assessment/Resultado';
 import { registrarAssessment } from './assessment/envio';
 
 const IDS = ['estacao-perfil', ...MODULOS.map(m => `modulo-${m.nome}`)];
+const ICONES_SETORES = [Store, ShoppingCart, Landmark, GraduationCap, Plane, Car, RadioTower, Building2];
+const ICONES_RECEITAS = RECEITAS.map(() => Warehouse);
 const botao = 'mt-8 inline-flex min-h-14 items-center gap-3 rounded-2xl bg-ciano px-6 font-extrabold text-ink';
 export default function App() {
   const [scores, setScores] = useState(() => MODULOS.map(() => [5,5,5,5]));
@@ -70,8 +72,8 @@ export default function App() {
       <Portao id="portao" indice={0} ligada={ligada} desktop={desktop} aoLigar={() => { setLigada(true); som.iniciar(); som.tocar('clique'); rolarPara(IDS[0],100); }} />
       <Estacao id={IDS[0]} indice={1} numero={1} total={6} setor="Recepção" titulo="Antes de tudo: onde a sua empresa joga?" desbloqueada={ligada}>
         <fieldset disabled={aberto || enviando} className="grid gap-6">
-          <div><h3 className="mb-3 text-lg font-extrabold">Qual é o seu setor?</h3><Opcoes rotulo="Setor da empresa" opcoes={[...SETORES]} escolhida={SETORES.indexOf(setor as typeof SETORES[number])} aoEscolher={i=>setSetor(SETORES[i])} /></div>
-          <div><h3 className="mb-3 text-lg font-extrabold">Faixa de receita anual</h3><Opcoes rotulo="Faixa de receita anual" opcoes={RECEITAS.map(x=>x.rotulo)} escolhida={RECEITAS.findIndex(x=>x.valor===receita)} aoEscolher={i=>setReceita(RECEITAS[i].valor)} /></div>
+          <div><h3 className="mb-3 text-lg font-extrabold">Qual é o seu setor?</h3><Opcoes rotulo="Setor da empresa" opcoes={[...SETORES]} icones={ICONES_SETORES} escolhida={SETORES.indexOf(setor as typeof SETORES[number])} aoEscolher={i=>setSetor(SETORES[i])} /></div>
+          <div><h3 className="mb-3 text-lg font-extrabold">Faixa de receita anual</h3><Opcoes rotulo="Faixa de receita anual" opcoes={RECEITAS.map(x=>x.rotulo)} icones={ICONES_RECEITAS} escolhida={RECEITAS.findIndex(x=>x.valor===receita)} aoEscolher={i=>setReceita(RECEITAS[i].valor)} /></div>
         </fieldset>
         <button type="button" className={botao} onClick={()=>confirmar(0)}>Confirmar contexto <ArrowRight className="size-5" /></button>
       </Estacao>

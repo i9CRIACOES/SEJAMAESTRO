@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Check, Lock } from "lucide-react";
+import { Check, Lock, type LucideIcon } from "lucide-react";
 import { TextoGigante } from "@/components/ui/parallax";
 import { cn } from "@/lib/utils";
 
@@ -83,8 +83,9 @@ export function Estacao({
 }
 
 /** Botões de opção: interruptores com luz-piloto. */
-export function Opcoes({ rotulo, opcoes, escolhida, aoEscolher, travado, aoPrever }: {
+export function Opcoes({ rotulo, opcoes, icones, escolhida, aoEscolher, travado, aoPrever }: {
   rotulo: string; opcoes: string[]; escolhida: number | undefined; aoEscolher: (i: number) => void; travado?: boolean;
+  icones?: LucideIcon[];
   /** Mouse em cima de uma opção: a animação mostra como ficaria, antes de clicar. */
   aoPrever?: (i: number | null) => void;
 }) {
@@ -92,6 +93,7 @@ export function Opcoes({ rotulo, opcoes, escolhida, aoEscolher, travado, aoPreve
     <div role="radiogroup" aria-label={rotulo} className="grid gap-2.5" onPointerLeave={() => aoPrever?.(null)}>
       {opcoes.map((op, i) => {
         const sel = escolhida === i;
+        const Icone = icones?.[i];
         return (
           <button
             key={op}
@@ -118,6 +120,7 @@ export function Opcoes({ rotulo, opcoes, escolhida, aoEscolher, travado, aoPreve
             <span className={cn("grid size-7 shrink-0 place-items-center rounded-full border-2 transition-colors duration-200", sel ? "border-ciano bg-ciano text-ink" : "border-white/25 bg-ink")}>
               {sel ? <Check className="size-4" strokeWidth={3} /> : <span className="size-1.5 rounded-full bg-white/30" />}
             </span>
+            {Icone && <Icone aria-hidden className={cn("size-5 shrink-0", sel ? "text-ciano" : "text-muted-foreground")} strokeWidth={1.8} />}
             <span className="text-base font-semibold leading-snug">{op}</span>
           </button>
         );

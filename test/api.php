@@ -7,6 +7,8 @@ $base = ['nome'=>'Teste Local', 'email'=>'teste@example.invalid', 'cel'=>'', 'em
 $r = validarAssessment($base + ['valorEmRiscoAno'=>1, 'maiorDor'=>'Falso']);
 verificar($r['maturidadeGeral'] == 5 && $r['maiorDor'] === 'Flow');
 verificar($r['valorEmRiscoAno'] === 437500000 && $r['valorEmRiscoPct'] === 18);
+$alta = $base; $alta['receita'] = 5000;
+verificar(validarAssessment($alta)['valorEmRiscoAno'] === 875000000);
 foreach ([0=>750000000,10=>125000000] as $nota=>$valor) {
     $v = $base; $v['modulos'] = array_fill(0,5,['respostas'=>array_fill(0,4,$nota)]);
     verificar(validarAssessment($v)['valorEmRiscoAno'] === $valor);

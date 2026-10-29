@@ -13,7 +13,7 @@ export function calcularAssessment(respostas: number[][], receita: number) {
   notas.forEach((n, i) => { if (n < notas[pior]) pior = i; });
   const pct = 0.05 + ((10 - geral) / 10) * 0.25;
   const ordem = { err: 0, warn: 1, ok: 2 };
-  return { notas, geral, pior, modulo: MODULOS[pior], pct, riscoAno: receita * 1e6 * pct, gargalo: ordem[status(notas[pior]).nivel] < ordem[status(geral).nivel] };
+  return { notas, geral, pior, modulo: MODULOS[pior], receita, pct, riscoAno: receita * 1e6 * pct, gargalo: ordem[status(notas[pior]).nivel] < ordem[status(geral).nivel] };
 }
 export function moeda(v: number) {
   if (v >= 1e9) return 'R$ ' + (v / 1e9).toFixed(1).replace('.', ',') + ' BI';

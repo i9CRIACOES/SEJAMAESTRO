@@ -61,5 +61,6 @@ export const RECEITAS = [
   { rotulo: 'R$ 200M – 500M', valor: 300 },
   { rotulo: 'R$ 500M – 1 BI', valor: 750 },
   { rotulo: 'R$ 1 BI – 4 BI', valor: 2500 },
+  { rotulo: 'Acima de R$ 4 BI', valor: 5000 },
 ];
 export const NOTA_METODO = 'Cases entregues pela Always On com método — o Maestro é esse método virado plataforma; resultados anteriores ao produto não são atribuídos a ele. Cases citados (nomeáveis): Youcom, Renner, e)lens, Habib’s, Santander, Easynvest. Estatísticas de mercado: Gartner (projetos de GenAI e investimento em fundação de dados), EMARKETER/Toluna (creative intelligence). ISO 27001/27701 do Maestro em estágio avançado para certificação. Estimativa de valor em risco: indicativa para priorização, calibrada à faixa de 5–30% do valor potencial — não é projeção contábil.';
